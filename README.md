@@ -1,6 +1,3 @@
-<div align="center">
-   <img src="/img/logo.svg?raw=true" width=600 style="background-color:white;">
-</div>
 
 # Backend Engineering Take-Home Assignment: Dynamic Pricing Proxy
 
@@ -86,3 +83,10 @@ docker container exec -it interview-dev ./bin/rails test test/controllers/pricin
 
 
 Good luck, and we look forward to seeing what you build\!
+
+## Running all containers 
+
+```bash
+# Start the docker compose, running interview-dev and the rate api
+docker compose up
+```

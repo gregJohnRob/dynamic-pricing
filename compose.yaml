@@ -1,0 +1,13 @@
+services:
+  web:
+    container_name: interview-dev
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails
+  rates:
+    container_name: rates
+    image: "tripladev/rate-api"
+    ports:
+      - "8080:8080"
