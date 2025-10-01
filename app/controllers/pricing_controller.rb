@@ -1,3 +1,5 @@
+require_relative Rails.root.join("app", "services", "rates", "client")
+
 class PricingController < ApplicationController
   VALID_PERIODS = %w[Summer Autumn Winter Spring].freeze
   VALID_HOTELS = %w[FloatingPointResort GitawayHotel RecursionRetreat].freeze
@@ -10,8 +12,10 @@ class PricingController < ApplicationController
     hotel  = params[:hotel]
     room   = params[:room]
 
-    # TODO: Start to implement here
-    render json: { rate: "12000" }
+    rates = RatesClient.instance.pricing
+    rate = rates.find{|rate| rate['period'] == period && rate['period'] == period && rate['period'] == period}
+    render json: { rate: rate['rate'] }
+
   end
 
   private

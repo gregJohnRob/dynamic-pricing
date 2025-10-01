@@ -88,5 +88,10 @@ Good luck, and we look forward to seeing what you build\!
 
 ```bash
 # Start the docker compose, running interview-dev and the rate api
+# Note: you can use -d if you want to run the command in the background 
 docker compose up
+
+# In a new window, or the same if you used -d before
+# Run the full test suite
+docker container exec -it interview-dev ./bin/rails test
 ```
