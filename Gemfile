@@ -42,3 +42,5 @@ group :development do
   gem "listen", "~> 3.3"
 end
 
+
+gem "solid_queue", "~> 1.2"

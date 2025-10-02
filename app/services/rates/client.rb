@@ -13,9 +13,10 @@ class RatesClient
       uri = URI("http://rates:8080/pricing")
       @http = http = Net::HTTP.new(uri.host, uri.port)
       @token = "04aa6f42aa03f220c2ae9a276cd68c62" #TODO: Move to config
+      @cache = nil
     end
 
-    def pricing
+    def refresh 
       request = Net::HTTP::Post.new("/pricing", {'Content-Type' => 'application/json', 'token' => '04aa6f42aa03f220c2ae9a276cd68c62'})
       body = {
         "attributes": [
@@ -60,7 +61,11 @@ class RatesClient
       request.body = body
       response = @http.request(request)
       response_body = JSON.parse(response.body)
-      response_body['rates']
+      @cache = response_body['rates']
+    end
+
+    def pricing
+      @cache
     end
 
 end
