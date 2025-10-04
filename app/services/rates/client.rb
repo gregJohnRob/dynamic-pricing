@@ -1,19 +1,16 @@
 require 'net/http'
 require 'json'
 require 'time'
+require 'kredis'
 
 class RatesClient
     include Singleton
     
-    def self.instance
-      @@instance ||= new
-    end
-  
     def initialize 
       uri = URI("http://rates:8080/pricing")
       @http = http = Net::HTTP.new(uri.host, uri.port)
       @token = "04aa6f42aa03f220c2ae9a276cd68c62" #TODO: Move to config
-      @cache = nil
+      @cache = Kredis.json "pricing", expires_in: 5.minutes
     end
 
     def refresh 
@@ -61,11 +58,11 @@ class RatesClient
       request.body = body
       response = @http.request(request)
       response_body = JSON.parse(response.body)
-      @cache = response_body['rates']
+      @cache.value = response_body['rates']
     end
 
     def pricing
-      @cache
+      @cache.value
     end
 
 end

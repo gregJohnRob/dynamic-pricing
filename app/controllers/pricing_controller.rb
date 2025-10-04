@@ -13,7 +13,7 @@ class PricingController < ApplicationController
     room   = params[:room]
 
     rates = RatesClient.instance.pricing
-    rate = rates.find{|rate| rate['period'] == period && rate['period'] == period && rate['period'] == period}
+    rate = rates.find{|rate| rate['period'] == period && rate['hotel'] == hotel && rate['room'] == room}
     render json: { rate: rate['rate'] }
 
   end
