@@ -15,4 +15,4 @@ development:
     schedule: every hour at minute 12
   periodic_cache_refresh:
     class: CacheRefreshJob
-    schedule: every 10 seconds
+    schedule: every 4 minutes
