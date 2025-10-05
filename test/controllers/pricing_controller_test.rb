@@ -1,7 +1,24 @@
 require "test_helper"
 
 class PricingControllerTest < ActionDispatch::IntegrationTest
+  test "should return error if cache was not updated" do
+    get pricing_url, params: {
+      period: "Summer",
+      hotel: "FloatingPointResort",
+      room: "SingletonRoom"
+    }
+
+    assert_response :not_found
+    assert_equal "application/json", @response.media_type
+
+    json_response = JSON.parse(@response.body)
+    assert_includes json_response["error"], "Unable to find price"
+  end
+
   test "should get pricing with all parameters" do
+    put pricing_url
+    assert_response :success
+
     get pricing_url, params: {
       period: "Summer",
       hotel: "FloatingPointResort",
@@ -11,10 +28,10 @@ class PricingControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal "application/json", @response.media_type
 
-    # json_response = JSON.parse(@response.body)
-    # TODO: for now, just assert that we get json back
-    # assert_equal "12000", json_response["rate"]
+    json_response = JSON.parse(@response.body)
+    assert is_number?(json_response["rate"])
   end
+
 
   test "should return error without any parameters" do
     get pricing_url
@@ -81,4 +98,5 @@ class PricingControllerTest < ActionDispatch::IntegrationTest
     json_response = JSON.parse(@response.body)
     assert_includes json_response["error"], "Invalid room"
   end
+
 end

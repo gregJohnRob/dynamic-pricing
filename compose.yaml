@@ -6,6 +6,9 @@ services:
       - "3000:3000"
     volumes:
       - .:/rails
+    depends_on:
+      - redis
+      - rates
   rates:
     container_name: rates
     image: "tripladev/rate-api"

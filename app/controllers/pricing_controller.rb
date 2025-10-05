@@ -5,7 +5,7 @@ class PricingController < ApplicationController
   VALID_HOTELS = %w[FloatingPointResort GitawayHotel RecursionRetreat].freeze
   VALID_ROOMS = %w[SingletonRoom BooleanTwin RestfulKing].freeze
 
-  before_action :validate_params
+  before_action :validate_params, only: [:index]
 
   def index
     period = params[:period]
@@ -13,9 +13,16 @@ class PricingController < ApplicationController
     room   = params[:room]
 
     rates = RatesClient.instance.pricing
+    if rates.nil?
+      return render json: { error: "Unable to find price" }, status: :not_found
+    end
     rate = rates.find{|rate| rate['period'] == period && rate['hotel'] == hotel && rate['room'] == room}
     render json: { rate: rate['rate'] }
+  end
 
+  def refresh
+    RatesClient.instance.refresh
+    render status: 200
   end
 
   private
