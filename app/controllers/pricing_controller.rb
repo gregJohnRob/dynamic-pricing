@@ -12,12 +12,11 @@ class PricingController < ApplicationController
     hotel  = params[:hotel]
     room   = params[:room]
 
-    rates = RatesClient.instance.pricing
-    if rates.nil?
+    rate = RatesClient.instance.pricing(hotel, period, room)
+    if rate.nil?
       return render json: { error: "Unable to find price" }, status: :not_found
     end
-    rate = rates.find{|rate| rate['period'] == period && rate['hotel'] == hotel && rate['room'] == room}
-    render json: { rate: rate['rate'] }
+    render json: { rate: rate }
   end
 
   def refresh

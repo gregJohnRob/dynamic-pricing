@@ -19,7 +19,11 @@ docker container exec -it interview-dev ./bin/rails test
 
 ### Rate Limiting 
 
-As mentioned on the [rate-api](https://hub.docker.com/r/tripladev/rate-api) docker page, we can only call to get rates 1,000 times per day. Since we need to handle 10,000 requests per day from our users, we will need to cache the response from the pricing model. 
+As mentioned on the [rate-api](https://hub.docker.com/r/tripladev/rate-api) docker page, we can only call to get rates 1,000 times per day. Since we need to handle 10,000 requests per day from our users, we will need to cache the response from the rate-api.
+
+Because rates are only valid for 5 minutes, I wanted to use that as the TTL for the cache. 
+
+I also saw that the rates-api accepts multiple parameters at the same time, and so made a request which would get everything for us in a single api call. 
 
 
 ### How to Cache

@@ -58,11 +58,24 @@ class RatesClient
       request.body = body
       response = @http.request(request)
       response_body = JSON.parse(response.body)
-      @cache.value = response_body['rates']
+      response_body['rates'].each do |rate|
+        key = buildKey(rate['hotel'], rate['period'], rate['room'])
+        value = Kredis.integer key, expires_in: 5.minutes
+        value.value = rate['rate']
+      end
     end
 
-    def pricing
-      @cache.value
+    def pricing(hotel, period, room)
+      key = buildKey(hotel, period, room)
+      puts key
+      value = Kredis.integer key
+      value.value
     end
+
+    private 
+    
+    def buildKey(hotel, period, room)
+      hotel + "_" + period + "_" + room
+    end 
 
 end
