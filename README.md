@@ -15,6 +15,11 @@ You can then run all of the tests using the below command:
 docker container exec -it interview-dev ./bin/rails test
 ```
 
+If you have made changes and need to rebuilt the docker docker image for the application you can use:
+```bash
+docker compose build --no-cache web
+```
+
 ## Thought Process 
 
 ### Rate Limiting 
@@ -30,8 +35,20 @@ I also saw that the rates-api accepts multiple parameters at the same time, and 
 
 When looking at a cache, my first thought was to eventually use Redis. Redis is very performant, and because we can de-couple Redis from our service, we would be able to scale in production. 
 
+If the service coupled cache refresh with the call to get a value, we could run into a cache stampede, where multiple calls would trigger a refresh at the same time, potentially leading to us overloading the downstream service and cache. Instead, I created a job as well as a dedicated endpoint to refresh the cache. 
+
 ## Production Ready 
 
 ### Separating Refresh From Instances
 
-At the moment, I believe that each instance of the service would try to refresh the cache at roughly the same time due to each instance having the same job. To work around this you could instead create an endpoint and move the job onto a lambda which runs separate from the main application. 
+At the moment, I believe that each instance of the service would try to refresh the cache at roughly the same time due to each instance having the same job. For production, I would recommend removing the job and replace it with a lambda or cron job separate to the service.
+
+### Improve config
+
+While implementing, some things were hard-coded which should have been moved to config. Namely:
+- rates-api token
+- Cache TTL
+
+### Logging 
+
+Proper logging and metrics would better allow the service to be monitored in production.
