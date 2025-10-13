@@ -45,13 +45,11 @@ At the moment, I believe that each instance of the service would try to refresh 
 
 ### Improve Config
 
-While implementing, some things were hard-coded which should have been moved to config. Namely:
-- rates-api token
-- Cache TTL
+The config still requires some work to make it production ready, namely pulling the token from an environment variable instead of plan text in the yaml file.
 
-### Logging 
+### Monitoring 
 
-Proper logging and metrics would better allow the service to be monitored in production.
+While there is some basic logging in place, I think that another improvement could be to add metrics. At least, I think that it would be worth while to create alerts for when things might go wrong with the service, like the cache fails to refresh.
 
 ### Move Load Test to Ruby Testing
 
