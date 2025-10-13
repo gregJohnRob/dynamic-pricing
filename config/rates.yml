@@ -1,0 +1,12 @@
+production:
+  token: 04aa6f42aa03f220c2ae9a276cd68c62 # TODO: Move to environment variable 
+  uri:  http://rates:8080 # TODO: Move to environment variable 
+
+development:
+  token: 04aa6f42aa03f220c2ae9a276cd68c62
+  uri:  http://rates:8080
+
+test:
+  token: 04aa6f42aa03f220c2ae9a276cd68c62
+  uri:  http://rates:8080
+

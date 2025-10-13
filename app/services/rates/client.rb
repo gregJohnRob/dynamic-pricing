@@ -7,9 +7,9 @@ class RatesClient
     include Singleton
     
     def initialize 
-      uri = URI("http://rates:8080/pricing")
+      uri = URI(Rails.configuration.rates["uri"])
       @http = http = Net::HTTP.new(uri.host, uri.port)
-      @token = "04aa6f42aa03f220c2ae9a276cd68c62" #TODO: Move to config
+      @token =  Rails.configuration.rates["token"]
       @cache = Kredis.json "pricing", expires_in: 5.minutes
     end
 
@@ -67,7 +67,6 @@ class RatesClient
 
     def pricing(hotel, period, room)
       key = buildKey(hotel, period, room)
-      puts key
       value = Kredis.integer key
       value.value
     end
