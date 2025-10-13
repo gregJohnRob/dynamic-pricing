@@ -14,7 +14,11 @@ class RatesClient
     end
 
     def refresh 
-      request = Net::HTTP::Post.new("/pricing", {'Content-Type' => 'application/json', 'token' => '04aa6f42aa03f220c2ae9a276cd68c62'})
+      if !connection_active
+        logger.error "Failed to ping Redis instance"
+        return false
+      end
+      request = Net::HTTP::Post.new("/pricing", {'Content-Type' => 'application/json', 'token' => @token})
       body = {
         "attributes": [
           {"period": "Summer", "hotel": "FloatingPointResort", "room": "SingletonRoom"},
@@ -56,22 +60,43 @@ class RatesClient
         ]
       }.to_json
       request.body = body
-      response = @http.request(request)
-      response_body = JSON.parse(response.body)
-      response_body['rates'].each do |rate|
-        key = buildKey(rate['hotel'], rate['period'], rate['room'])
-        value = Kredis.integer key, expires_in: 5.minutes
-        value.value = rate['rate']
+      begin 
+        response = @http.request(request)
+        response_body = JSON.parse(response.body)
+        response_body['rates'].each do |rate|
+          key = buildKey(rate['hotel'], rate['period'], rate['room'])
+          value = Kredis.integer key, expires_in: 5.minutes
+          value.value = rate['rate']
+        end
+      rescue => e 
+        logger.error "Failed to call rates api: #{e.class}; #{e.message}"
+        return false
       end
+      return true
     end
 
     def pricing(hotel, period, room)
       key = buildKey(hotel, period, room)
       value = Kredis.integer key
-      value.value
+      price = value.value 
+      if price.nil?
+        logger.warn "Failed to get price from Redis. key=#{key}"
+      else
+        logger.debug "Successfully got price from Redis. key=#{key}"
+      end
+      price
     end
 
     private 
+
+    def connection_active
+      begin 
+        Kredis.redis.ping 
+        return true
+      rescue Redis::CannotConnectError => e
+        return false
+      end
+    end
     
     def buildKey(hotel, period, room)
       hotel + "_" + period + "_" + room

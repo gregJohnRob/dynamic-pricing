@@ -20,8 +20,12 @@ class PricingController < ApplicationController
   end
 
   def refresh
-    RatesClient.instance.refresh
-    render status: 200
+    successfully_refreshed = RatesClient.instance.refresh
+    if successfully_refreshed
+      render status: 200
+    else
+      render status: 500
+    end
   end
 
   private

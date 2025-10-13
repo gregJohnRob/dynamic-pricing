@@ -9,6 +9,10 @@ class CacheRefreshJob < ApplicationJob
     http = http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Put.new(uri.path)
     response = http.request(request)
-    puts response
+    if response.code == "500"
+      logger.error "Failed to refresh cache"
+    else 
+      logger.info "Successfully refreshed cache"
+    end
   end
 end
