@@ -10,9 +10,9 @@ class CacheRefreshJob < ApplicationJob
     request = Net::HTTP::Put.new(uri.path)
     response = http.request(request)
     if response.code == "500"
-      logger.error "Failed to refresh cache"
+      Rails.logger.error "Failed to refresh cache"
     else 
-      logger.info "Successfully refreshed cache"
+      Rails.logger.info "Successfully refreshed cache"
     end
   end
 end

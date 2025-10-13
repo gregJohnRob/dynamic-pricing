@@ -15,7 +15,7 @@ class RatesClient
 
     def refresh 
       if !connection_active
-        logger.error "Failed to ping Redis instance"
+        Rails.logger.error "Failed to ping Redis instance"
         return false
       end
       request = Net::HTTP::Post.new("/pricing", {'Content-Type' => 'application/json', 'token' => @token})
@@ -69,7 +69,7 @@ class RatesClient
           value.value = rate['rate']
         end
       rescue => e 
-        logger.error "Failed to call rates api: #{e.class}; #{e.message}"
+        Rails.logger.error "Failed to call rates api: #{e.class}; #{e.message}"
         return false
       end
       return true
@@ -80,9 +80,9 @@ class RatesClient
       value = Kredis.integer key
       price = value.value 
       if price.nil?
-        logger.warn "Failed to get price from Redis. key=#{key}"
+        Rails.logger.warn "Failed to get price from Redis. key=#{key}"
       else
-        logger.debug "Successfully got price from Redis. key=#{key}"
+        Rails.logger.debug "Successfully got price from Redis. key=#{key}"
       end
       price
     end
