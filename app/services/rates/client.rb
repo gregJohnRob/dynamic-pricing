@@ -10,7 +10,7 @@ class RatesClient
       uri = URI(Rails.configuration.rates["uri"])
       @http = http = Net::HTTP.new(uri.host, uri.port)
       @token =  Rails.configuration.rates["token"]
-      @cache = Kredis.json "pricing", expires_in: 5.minutes
+      @expires_in_seconds = Rails.configuration.rates["expires_in_seconds"]
     end
 
     def refresh 
@@ -65,7 +65,7 @@ class RatesClient
         response_body = JSON.parse(response.body)
         response_body['rates'].each do |rate|
           key = buildKey(rate['hotel'], rate['period'], rate['room'])
-          value = Kredis.integer key, expires_in: 5.minutes
+          value = Kredis.integer key, expires_in: @expires_in_seconds
           value.value = rate['rate']
         end
       rescue => e 
