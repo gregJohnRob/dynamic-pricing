@@ -15,7 +15,6 @@ class RatesClient
 
     def refresh 
       if !connection_active
-        Rails.logger.error "Failed to ping Redis instance"
         return false
       end
       request = Net::HTTP::Post.new("/pricing", {'Content-Type' => 'application/json', 'token' => @token})
@@ -92,8 +91,10 @@ class RatesClient
     def connection_active
       begin 
         Kredis.redis.ping 
+        Rails.logger.debug "Successfully pinged Redis"
         return true
       rescue Redis::CannotConnectError => e
+        Rails.logger.error "Failed to ping Redis #{e.message}"
         return false
       end
     end
