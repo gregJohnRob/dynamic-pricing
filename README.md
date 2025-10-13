@@ -43,7 +43,7 @@ If the service coupled cache refresh with the call to get a value, we could run 
 
 At the moment, I believe that each instance of the service would try to refresh the cache at roughly the same time due to each instance having the same job. For production, I would recommend removing the job and replace it with a lambda or cron job separate to the service.
 
-### Improve config
+### Improve Config
 
 While implementing, some things were hard-coded which should have been moved to config. Namely:
 - rates-api token
@@ -52,3 +52,9 @@ While implementing, some things were hard-coded which should have been moved to 
 ### Logging 
 
 Proper logging and metrics would better allow the service to be monitored in production.
+
+### Move Load Test to Ruby Testing
+
+I created a simple bash script to send 10000 requests to the service to confirm that the service could handle the load. This should ideally exist within a Ruby test framework, however I was not able to get it working in time. 
+
+To run the script, start the docker image as shown above, and run the command `sh scripts/load_test/script.sh`.
